@@ -3,6 +3,7 @@ import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { Toaster } from '@/components/ui/sonner'
+import { ThemeProvider } from '@/components/theme-provider'
 import './globals.css'
 
 const geistSans = Geist({ variable: '--font-geist-sans', subsets: ['latin'] })
@@ -12,9 +13,9 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'Lumen — AI Assistant',
+  title: 'Claudium — AI Assistant',
   description:
-    'A thoughtful AI assistant for writing, coding, and reasoning. Chat with Lumen in a refined, distraction-free workspace.',
+    'Claudium: A premium AI assistant with Apple Glass aesthetic. Write, code, reason, and create with style.',
   generator: 'v0.app',
 }
 
@@ -33,9 +34,11 @@ export default function RootLayout({
       className={`dark ${geistSans.variable} ${geistMono.variable}`}
     >
       <body className="bg-background font-sans antialiased">
-        <TooltipProvider delay={200}>{children}</TooltipProvider>
-        <Toaster />
-        {process.env.NODE_ENV === 'production' && <Analytics />}
+        <ThemeProvider>
+          <TooltipProvider delay={200}>{children}</TooltipProvider>
+          <Toaster />
+          {process.env.NODE_ENV === 'production' && <Analytics />}
+        </ThemeProvider>
       </body>
     </html>
   )

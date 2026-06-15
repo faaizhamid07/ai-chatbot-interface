@@ -14,6 +14,7 @@ import type { Conversation } from "@/lib/chat-types"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import { useTheme } from "@/components/theme-provider"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -64,21 +65,36 @@ export function ChatSidebar({
     () => groupByDate([...conversations].sort((a, b) => b.updatedAt - a.updatedAt)),
     [conversations],
   )
+  const { theme } = useTheme()
+  const isGlass = theme === 'glass'
 
   return (
-    <div className="flex h-full w-full flex-col bg-sidebar text-sidebar-foreground">
-      <div className="flex items-center justify-between gap-2 px-3 py-3.5">
-        <div className="flex items-center gap-2 pl-1">
-          <div className="flex size-7 items-center justify-center rounded-md bg-primary text-primary-foreground">
+    <div className={cn(
+      "flex h-full w-full flex-col text-sidebar-foreground transition-all duration-300",
+      isGlass 
+        ? "bg-sidebar backdrop-blur-xl border border-white/10 rounded-2xl" 
+        : "bg-sidebar"
+    )}>
+      <div className="flex items-center justify-between gap-2 px-4 py-4">
+        <div className="flex items-center gap-3 pl-1">
+          <div className={cn(
+            "flex size-8 items-center justify-center font-semibold text-primary-foreground transition-all",
+            isGlass 
+              ? "rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 shadow-lg shadow-purple-500/30" 
+              : "rounded-md bg-primary"
+          )}>
             <SparklesIcon className="size-4" />
           </div>
-          <span className="text-sm font-semibold tracking-tight">Lumen</span>
+          <span className="text-sm font-bold tracking-tight">Claudium</span>
         </div>
         {showCollapse && (
           <Button
             variant="ghost"
             size="icon"
-            className="size-8 text-muted-foreground hover:text-foreground"
+            className={cn(
+              "size-8",
+              isGlass && "hover:bg-white/10 hover:text-foreground"
+            )}
             onClick={onCollapse}
             aria-label="Collapse sidebar"
           >
@@ -87,17 +103,27 @@ export function ChatSidebar({
         )}
       </div>
 
-      <div className="flex flex-col gap-2 px-3 pb-2">
+      <div className="flex flex-col gap-2 px-4 pb-3">
         <Button
           onClick={onNewChat}
-          className="w-full justify-start gap-2 rounded-lg font-medium"
+          className={cn(
+            "w-full justify-start gap-2 rounded-lg font-medium transition-all",
+            isGlass 
+              ? "bg-gradient-to-r from-purple-500 to-pink-500 hover:shadow-lg hover:shadow-purple-500/30 text-white" 
+              : ""
+          )}
         >
           <MessageSquarePlusIcon className="size-4" />
           New chat
         </Button>
         <button
           type="button"
-          className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+          className={cn(
+            "flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition-all",
+            isGlass
+              ? "text-foreground/60 hover:bg-white/10 hover:text-foreground"
+              : "text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+          )}
         >
           <SearchIcon className="size-4" />
           Search chats
@@ -106,22 +132,27 @@ export function ChatSidebar({
 
       <ScrollArea className="min-h-0 flex-1 px-2">
         <div className="flex flex-col gap-4 py-3">
-          {grouped.map((group) => (
-            <div key={group.label} className="flex flex-col gap-0.5">
+          {grouped.map((group, idx) => (
+            <div key={group.label} className={isGlass ? `glass-fade-in` : ""} style={isGlass ? { animationDelay: `${idx * 50}ms` } : {}}>
               <p className="px-3 pb-1 text-xs font-medium text-muted-foreground/70">
                 {group.label}
               </p>
-              {group.items.map((conv) => {
+              {group.items.map((conv, itemIdx) => {
                 const isActive = conv.id === activeId
                 return (
                   <div
                     key={conv.id}
                     className={cn(
-                      "group/item relative flex items-center rounded-lg transition-colors",
-                      isActive
+                      "group/item relative flex items-center rounded-lg transition-all",
+                      isGlass
+                        ? isActive
+                          ? "bg-gradient-to-r from-purple-500/30 to-pink-500/30 backdrop-blur border border-white/20 text-foreground"
+                          : "hover:bg-white/10"
+                        : isActive
                         ? "bg-sidebar-accent text-sidebar-accent-foreground"
                         : "hover:bg-sidebar-accent/60",
                     )}
+                    style={isGlass ? { animationDelay: `${(idx * 5 + itemIdx * 30)}ms` } : {}}
                   >
                     <button
                       type="button"
@@ -137,8 +168,10 @@ export function ChatSidebar({
                             type="button"
                             aria-label="Conversation options"
                             className={cn(
-                              "mr-1 flex size-7 shrink-0 items-center justify-center rounded-md text-muted-foreground opacity-0 transition-opacity hover:bg-sidebar-accent-foreground/10 hover:text-foreground focus-visible:opacity-100 group-hover/item:opacity-100",
-                              isActive && "opacity-100",
+                              "mr-1 flex size-7 shrink-0 items-center justify-center rounded-md opacity-0 transition-all hover:text-foreground focus-visible:opacity-100 group-hover/item:opacity-100",
+                              isGlass
+                                ? "text-foreground/40 hover:bg-white/20"
+                                : "text-muted-foreground hover:bg-sidebar-accent-foreground/10"
                             )}
                           >
                             <MoreHorizontalIcon className="size-4" />
@@ -169,12 +202,27 @@ export function ChatSidebar({
         </div>
       </ScrollArea>
 
-      <div className="border-t border-sidebar-border p-3">
+      <div className={cn(
+        "p-3 transition-all",
+        isGlass
+          ? "border-t border-white/10"
+          : "border-t border-sidebar-border"
+      )}>
         <button
           type="button"
-          className="flex w-full items-center gap-3 rounded-lg px-2 py-2 text-left transition-colors hover:bg-sidebar-accent"
+          className={cn(
+            "flex w-full items-center gap-3 rounded-lg px-2 py-2 text-left transition-all",
+            isGlass
+              ? "hover:bg-white/10"
+              : "hover:bg-sidebar-accent"
+          )}
         >
-          <div className="flex size-8 items-center justify-center rounded-full bg-secondary text-sm font-medium text-secondary-foreground">
+          <div className={cn(
+            "flex size-8 items-center justify-center rounded-full text-sm font-medium",
+            isGlass
+              ? "bg-gradient-to-br from-blue-500 to-cyan-500 text-white"
+              : "bg-secondary text-secondary-foreground"
+          )}>
             A
           </div>
           <div className="flex min-w-0 flex-col">
