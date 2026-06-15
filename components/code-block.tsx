@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter"
 import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism"
-import { CheckIcon, CopyIcon } from "lucide-react"
+import { Check as CheckIcon, Copy as CopyIcon } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 interface CodeBlockProps {
@@ -25,26 +25,26 @@ export function CodeBlock({ language, value }: CodeBlockProps) {
   }
 
   return (
-    <div className="group/code my-4 overflow-hidden rounded-xl border border-border bg-[oklch(0.18_0.006_56)] text-sm">
-      <div className="flex items-center justify-between border-b border-border/70 bg-secondary/50 px-4 py-2">
-        <span className="font-mono text-xs text-muted-foreground">
+    <div className="group/code my-4 overflow-hidden rounded-2xl border border-border/50 bg-muted/40 backdrop-blur-xl text-sm shadow-sm">
+      <div className="glass-inner-glow flex items-center justify-between border-b border-border/50 bg-card/50 px-4 py-2.5">
+        <span className="font-mono text-xs font-medium text-muted-foreground">
           {language || "text"}
         </span>
         <button
           type="button"
           onClick={handleCopy}
-          className="flex items-center gap-1.5 rounded-md px-2 py-1 text-xs text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+          className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs text-muted-foreground transition-all hover:bg-card hover:text-foreground"
           aria-label="Copy code"
         >
           {copied ? (
             <>
               <CheckIcon className="size-3.5 text-primary" />
-              Copied
+              <span className="font-medium text-primary">Copied</span>
             </>
           ) : (
             <>
               <CopyIcon className="size-3.5" />
-              Copy
+              <span>Copy</span>
             </>
           )}
         </button>
@@ -57,7 +57,7 @@ export function CodeBlock({ language, value }: CodeBlockProps) {
           background: "transparent",
           padding: "1rem",
           fontSize: "0.8125rem",
-          lineHeight: 1.6,
+          lineHeight: 1.7,
         }}
         codeTagProps={{
           style: { fontFamily: "var(--font-mono)" },
@@ -74,7 +74,7 @@ export function InlineCode({ className, children, ...props }: React.ComponentPro
   return (
     <code
       className={cn(
-        "rounded-md border border-border/60 bg-secondary/70 px-1.5 py-0.5 font-mono text-[0.85em] text-foreground",
+        "rounded-lg bg-muted px-1.5 py-0.5 font-mono text-[0.85em] text-foreground",
         className,
       )}
       {...props}

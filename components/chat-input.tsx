@@ -1,13 +1,7 @@
 "use client"
 
 import { useRef, useState } from "react"
-import {
-  ArrowUpIcon,
-  PaperclipIcon,
-  XIcon,
-  FileTextIcon,
-  ImageIcon,
-} from "lucide-react"
+import { ArrowUp as ArrowUpIcon, Paperclip as PaperclipIcon, Bone as XIcon, FileText as FileTextIcon, Image as ImageIcon } from "lucide-react"
 import type { Attachment } from "@/lib/chat-types"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -99,13 +93,13 @@ export function ChatInput({ onSend, disabled }: ChatInputProps) {
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
         className={cn(
-          "relative rounded-2xl border bg-card shadow-sm transition-colors",
-          dragging ? "border-primary border-dashed bg-primary/5" : "border-border",
+          "glass glass-border glass-shadow-lg relative rounded-2xl transition-all duration-200",
+          dragging ? "border-primary border-dashed bg-primary/10 ring-2 ring-primary/20" : "",
         )}
       >
         {dragging && (
-          <div className="pointer-events-none absolute inset-0 z-10 flex flex-col items-center justify-center gap-2 rounded-2xl bg-card/90 backdrop-blur-sm">
-            <PaperclipIcon className="size-5 text-primary" />
+          <div className="pointer-events-none absolute inset-0 z-10 flex flex-col items-center justify-center gap-2.5 rounded-2xl glass-strong">
+            <PaperclipIcon className="size-6 text-primary" />
             <p className="text-sm font-medium text-foreground">
               Drop files to attach
             </p>
@@ -113,21 +107,21 @@ export function ChatInput({ onSend, disabled }: ChatInputProps) {
         )}
 
         {attachments.length > 0 && (
-          <div className="flex flex-wrap gap-2 px-3 pt-3">
+          <div className="flex flex-wrap gap-2 p-3 pb-0">
             {attachments.map((att) => (
               <div
                 key={att.id}
-                className="group/att flex items-center gap-2 rounded-lg border border-border bg-secondary/60 py-1.5 pr-1.5 pl-2.5"
+                className="group/att glass glass-inner-glow flex items-center gap-2.5 rounded-xl py-2 pr-2 pl-3"
               >
-                <span className="flex size-7 items-center justify-center rounded-md bg-primary/15 text-primary">
+                <span className="flex size-8 items-center justify-center rounded-lg bg-primary/15 text-primary">
                   {isImage(att.type) ? (
-                    <ImageIcon className="size-3.5" />
+                    <ImageIcon className="size-4" />
                   ) : (
-                    <FileTextIcon className="size-3.5" />
+                    <FileTextIcon className="size-4" />
                   )}
                 </span>
                 <div className="flex flex-col">
-                  <span className="max-w-36 truncate text-xs font-medium">
+                  <span className="max-w-40 truncate text-xs font-medium text-foreground">
                     {att.name}
                   </span>
                   <span className="text-[10px] text-muted-foreground">
@@ -140,16 +134,16 @@ export function ChatInput({ onSend, disabled }: ChatInputProps) {
                     setAttachments((prev) => prev.filter((a) => a.id !== att.id))
                   }
                   aria-label={`Remove ${att.name}`}
-                  className="flex size-6 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+                  className="flex size-7 items-center justify-center rounded-lg text-muted-foreground transition-all hover:bg-card hover:text-foreground"
                 >
-                  <XIcon className="size-3.5" />
+                  <XIcon className="size-4" />
                 </button>
               </div>
             ))}
           </div>
         )}
 
-        <div className="flex items-end gap-2 p-2.5">
+        <div className="flex items-end gap-2 p-3">
           <input
             ref={fileInputRef}
             type="file"
@@ -164,7 +158,7 @@ export function ChatInput({ onSend, disabled }: ChatInputProps) {
             type="button"
             variant="ghost"
             size="icon"
-            className="size-9 shrink-0 rounded-lg text-muted-foreground hover:text-foreground"
+            className="size-10 shrink-0 rounded-xl text-muted-foreground hover:text-foreground hover:bg-card"
             onClick={() => fileInputRef.current?.click()}
             aria-label="Attach file"
           >
@@ -177,14 +171,14 @@ export function ChatInput({ onSend, disabled }: ChatInputProps) {
             onChange={handleInput}
             onKeyDown={handleKeyDown}
             rows={1}
-            placeholder="Message Lumen..."
-            className="max-h-[200px] min-h-9 flex-1 resize-none self-center bg-transparent py-1.5 text-[0.9375rem] leading-relaxed text-foreground placeholder:text-muted-foreground focus:outline-none"
+            placeholder="Message Claudium..."
+            className="max-h-[200px] min-h-10 flex-1 resize-none self-center bg-transparent py-2 text-[0.9375rem] leading-relaxed text-foreground placeholder:text-muted-foreground focus:outline-none"
           />
 
           <Button
             type="button"
             size="icon"
-            className="size-9 shrink-0 rounded-lg"
+            className="size-10 shrink-0 rounded-xl spring-bounce hover:scale-105 active:scale-95"
             onClick={handleSubmit}
             disabled={(!value.trim() && attachments.length === 0) || disabled}
             aria-label="Send message"
@@ -193,8 +187,8 @@ export function ChatInput({ onSend, disabled }: ChatInputProps) {
           </Button>
         </div>
       </div>
-      <p className="px-2 pt-2 text-center text-xs text-muted-foreground">
-        Lumen can make mistakes. Consider checking important information.
+      <p className="px-2 pt-2.5 text-center text-xs text-muted-foreground/70">
+        Claudium can make mistakes. Consider checking important information.
       </p>
     </div>
   )

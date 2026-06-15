@@ -12,14 +12,14 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'Lumen — AI Assistant',
+  title: 'Claudium — AI Assistant',
   description:
-    'A thoughtful AI assistant for writing, coding, and reasoning. Chat with Lumen in a refined, distraction-free workspace.',
+    'A thoughtful AI assistant for writing, coding, and reasoning. Experience Claudium in a refined, glass-inspired workspace.',
   generator: 'v0.app',
 }
 
 export const viewport = {
-  themeColor: '#1c1a17',
+  themeColor: '#f5f5f7',
 }
 
 export default function RootLayout({
@@ -30,9 +30,9 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`dark ${geistSans.variable} ${geistMono.variable}`}
+      className={`${geistSans.variable} ${geistMono.variable}`}
     >
-      <body className="bg-background font-sans antialiased">
+      <body className="bg-gradient-glass font-sans antialiased">
         <TooltipProvider delay={200}>{children}</TooltipProvider>
         <Toaster />
         {process.env.NODE_ENV === 'production' && <Analytics />}

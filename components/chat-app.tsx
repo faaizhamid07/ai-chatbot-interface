@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import { PanelLeftIcon, SquarePenIcon } from "lucide-react"
+import { PanelLeft as PanelLeftIcon, SquarePen as SquarePenIcon } from "lucide-react"
 import type { Attachment, Conversation } from "@/lib/chat-types"
 import { sampleConversations } from "@/lib/sample-data"
 import { generateReply, makeMessage } from "@/lib/generate-reply"
@@ -136,22 +136,25 @@ fetch(
   )
 
   return (
-    <div className="flex h-dvh w-full overflow-hidden bg-background">
+    <div className="flex h-dvh w-full overflow-hidden">
       {/* Desktop sidebar */}
       <aside
         className={cn(
-          "hidden shrink-0 border-r border-sidebar-border transition-[width] duration-300 ease-in-out md:block",
+          "hidden shrink-0 transition-[width] duration-300 ease-out md:block",
           sidebarOpen ? "w-72" : "w-0",
         )}
       >
-        <div className={cn("h-full w-72", !sidebarOpen && "pointer-events-none opacity-0")}>
+        <div className={cn(
+          "glass-sidebar glass-shadow h-full w-72 transition-opacity duration-300",
+          !sidebarOpen && "pointer-events-none opacity-0"
+        )}>
           {sidebar(true)}
         </div>
       </aside>
 
       {/* Mobile sidebar */}
       <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
-        <SheetContent side="left" showCloseButton={false} className="w-72 max-w-72 p-0">
+        <SheetContent side="left" showCloseButton={false} className="glass-strong w-72 max-w-72 p-0">
           <SheetTitle className="sr-only">Conversation history</SheetTitle>
           {sidebar(false)}
         </SheetContent>
@@ -159,7 +162,7 @@ fetch(
 
       {/* Main */}
       <main className="flex min-w-0 flex-1 flex-col">
-        <header className="flex h-14 shrink-0 items-center gap-2 border-b border-border px-3 sm:px-4">
+        <header className="glass glass-inner-glow sticky top-0 z-10 flex h-14 shrink-0 items-center gap-2 border-b border-border/50 px-3 sm:px-4">
           <Button
             variant="ghost"
             size="icon"
@@ -180,7 +183,7 @@ fetch(
               <PanelLeftIcon className="size-5" />
             </Button>
           )}
-          <h2 className="min-w-0 flex-1 truncate text-sm font-medium">
+          <h2 className="min-w-0 flex-1 truncate text-sm font-medium text-foreground">
             {activeConversation?.title ?? "New chat"}
           </h2>
           <Button

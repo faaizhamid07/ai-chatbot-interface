@@ -1,15 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import {
-  SparklesIcon,
-  CopyIcon,
-  CheckIcon,
-  ThumbsUpIcon,
-  ThumbsDownIcon,
-  RotateCcwIcon,
-  FileTextIcon,
-} from "lucide-react"
+import { Sparkles as SparklesIcon, Copy as CopyIcon, Check as CheckIcon, ThumbsUp as ThumbsUpIcon, ThumbsDown as ThumbsDownIcon, RotateCcw as RotateCcwIcon, FileText as FileTextIcon } from "lucide-react"
 import type { Message } from "@/lib/chat-types"
 import { cn } from "@/lib/utils"
 import { Markdown } from "./markdown"
@@ -42,7 +34,7 @@ function ActionButton({
             type="button"
             onClick={onClick}
             aria-label={label}
-            className="flex size-7 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+            className="flex size-8 items-center justify-center rounded-lg text-muted-foreground transition-all hover:bg-card hover:text-foreground"
           >
             {children}
           </button>
@@ -76,11 +68,11 @@ export function ChatMessage({ message }: { message: Message }) {
               {message.attachments.map((att) => (
                 <div
                   key={att.id}
-                  className="flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-2"
+                  className="glass glass-border flex items-center gap-2.5 rounded-xl px-3.5 py-2.5"
                 >
                   <FileTextIcon className="size-4 text-primary" />
                   <div className="flex flex-col">
-                    <span className="max-w-40 truncate text-xs font-medium">
+                    <span className="max-w-40 truncate text-xs font-medium text-foreground">
                       {att.name}
                     </span>
                     <span className="text-[10px] text-muted-foreground">
@@ -92,7 +84,7 @@ export function ChatMessage({ message }: { message: Message }) {
             </div>
           )}
           {message.content && (
-            <div className="rounded-2xl rounded-br-md bg-secondary px-4 py-2.5 text-[0.9375rem] leading-relaxed text-secondary-foreground">
+            <div className="glass glass-border glass-shadow rounded-2xl rounded-br-sm px-4 py-3 text-[0.9375rem] leading-relaxed text-foreground">
               <p className="whitespace-pre-wrap text-pretty">{message.content}</p>
             </div>
           )}
@@ -103,12 +95,14 @@ export function ChatMessage({ message }: { message: Message }) {
 
   return (
     <div className="group/message flex animate-in fade-in slide-in-from-bottom-2 gap-3 duration-300 sm:gap-4">
-      <div className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
+      <div className="mt-1 flex size-8 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-primary/80 text-primary-foreground shadow-sm glass-inner-glow">
         <SparklesIcon className="size-4" />
       </div>
-      <div className="flex min-w-0 flex-1 flex-col gap-1">
-        <Markdown content={message.content} />
-        <div className="flex items-center gap-0.5 pt-1 opacity-0 transition-opacity group-hover/message:opacity-100 focus-within:opacity-100">
+      <div className="flex min-w-0 flex-1 flex-col gap-1.5">
+        <div className="glass glass-border glass-shadow rounded-2xl rounded-tl-sm px-5 py-4">
+          <Markdown content={message.content} />
+        </div>
+        <div className="flex items-center gap-0.5 pt-0.5 opacity-0 transition-opacity duration-200 group-hover/message:opacity-100 focus-within:opacity-100">
           <ActionButton label={copied ? "Copied" : "Copy"} onClick={handleCopy}>
             {copied ? (
               <CheckIcon className="size-4 text-primary" />
@@ -134,13 +128,15 @@ export function ChatMessage({ message }: { message: Message }) {
 export function TypingIndicator() {
   return (
     <div className="flex animate-in fade-in gap-3 duration-300 sm:gap-4">
-      <div className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
+      <div className="mt-1 flex size-8 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-primary/80 text-primary-foreground shadow-sm glass-inner-glow">
         <SparklesIcon className="size-4" />
       </div>
-      <div className="flex items-center gap-1.5 pt-2.5">
-        <span className="size-2 animate-bounce rounded-full bg-muted-foreground [animation-delay:-0.3s]" />
-        <span className="size-2 animate-bounce rounded-full bg-muted-foreground [animation-delay:-0.15s]" />
-        <span className="size-2 animate-bounce rounded-full bg-muted-foreground" />
+      <div className="glass glass-border rounded-2xl rounded-tl-sm px-5 py-4">
+        <div className="flex items-center gap-2">
+          <span className="size-2 animate-bounce rounded-full bg-primary [animation-delay:-0.3s]" />
+          <span className="size-2 animate-bounce rounded-full bg-primary [animation-delay:-0.15s]" />
+          <span className="size-2 animate-bounce rounded-full bg-primary" />
+        </div>
       </div>
     </div>
   )

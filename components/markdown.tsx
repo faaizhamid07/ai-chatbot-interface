@@ -74,20 +74,20 @@ export function Markdown({ content }: { content: string }) {
           ),
           hr: () => <hr className="my-6 border-border" />,
           table: ({ children }) => (
-            <div className="my-4 overflow-x-auto rounded-lg border border-border">
+            <div className="my-4 overflow-x-auto rounded-xl border border-border/50 glass">
               <table className="w-full border-collapse text-sm">{children}</table>
             </div>
           ),
           thead: ({ children }) => (
-            <thead className="bg-secondary/50">{children}</thead>
+            <thead className="bg-muted/50">{children}</thead>
           ),
           th: ({ children }) => (
-            <th className="border-b border-border px-4 py-2 text-left font-medium">
+            <th className="border-b border-border/50 px-4 py-2.5 text-left font-medium text-foreground">
               {children}
             </th>
           ),
           td: ({ children }) => (
-            <td className="border-b border-border/60 px-4 py-2 align-top">
+            <td className="border-b border-border/30 px-4 py-2.5 align-top text-foreground">
               {children}
             </td>
           ),
