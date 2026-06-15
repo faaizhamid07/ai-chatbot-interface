@@ -72,18 +72,55 @@ export function ChatApp() {
     }
 
     setThinking(true)
-    const targetId = convId
-    window.setTimeout(() => {
-      const reply = makeMessage("assistant", generateReply(text))
-      setConversations((prev) =>
-        prev.map((c) =>
-          c.id === targetId
-            ? { ...c, messages: [...c.messages, reply], updatedAt: Date.now() }
-            : c,
-        ),
-      )
-      setThinking(false)
-    }, 1100)
+
+const targetId = convId
+
+fetch(
+  `http://127.0.0.1:8000/chat?message=${encodeURIComponent(text)}`
+)
+  .then((res) => res.json())
+  .then((data) => {
+
+    const reply = makeMessage(
+      "assistant",
+      data.reply
+    )
+
+    setConversations((prev) =>
+      prev.map((c) =>
+        c.id === targetId
+          ? {
+              ...c,
+              messages: [...c.messages, reply],
+              updatedAt: Date.now(),
+            }
+          : c,
+      ),
+    )
+  })
+  .catch((err) => {
+    console.error(err)
+
+    const reply = makeMessage(
+      "assistant",
+      "Error contacting backend."
+    )
+
+    setConversations((prev) =>
+      prev.map((c) =>
+        c.id === targetId
+          ? {
+              ...c,
+              messages: [...c.messages, reply],
+              updatedAt: Date.now(),
+            }
+          : c,
+      ),
+    )
+  })
+  .finally(() => {
+    setThinking(false)
+  })
   }
 
   const sidebar = (showCollapse: boolean) => (
