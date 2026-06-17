@@ -1,11 +1,13 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
+import { motion, AnimatePresence } from "framer-motion"
 import { PanelLeft as PanelLeftIcon, SquarePen as SquarePenIcon } from "lucide-react"
 import type { Attachment, Conversation } from "@/lib/chat-types"
 import { sampleConversations } from "@/lib/sample-data"
 import { generateReply, makeMessage } from "@/lib/generate-reply"
 import { cn } from "@/lib/utils"
+import { springs, fadeSlideIn, fadeScale } from "@/lib/motion"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet"
@@ -138,19 +140,27 @@ fetch(
   return (
     <div className="flex h-dvh w-full overflow-hidden">
       {/* Desktop sidebar */}
-      <aside
-        className={cn(
-          "hidden shrink-0 transition-[width] duration-300 ease-out md:block",
-          sidebarOpen ? "w-72" : "w-0",
+      <AnimatePresence initial={false}>
+        {sidebarOpen && (
+          <motion.aside
+            initial={{ width: 0, opacity: 0 }}
+            animate={{ width: 288, opacity: 1 }}
+            exit={{ width: 0, opacity: 0 }}
+            transition={springs.smooth}
+            className="hidden shrink-0 overflow-hidden md:block"
+          >
+            <motion.div
+              initial={{ x: -20, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: -20, opacity: 0 }}
+              transition={springs.smooth}
+              className="glass-sidebar glass-shadow h-full w-72"
+            >
+              {sidebar(true)}
+            </motion.div>
+          </motion.aside>
         )}
-      >
-        <div className={cn(
-          "glass-sidebar glass-shadow h-full w-72 transition-opacity duration-300",
-          !sidebarOpen && "pointer-events-none opacity-0"
-        )}>
-          {sidebar(true)}
-        </div>
-      </aside>
+      </AnimatePresence>
 
       {/* Mobile sidebar */}
       <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
@@ -162,7 +172,12 @@ fetch(
 
       {/* Main */}
       <main className="flex min-w-0 flex-1 flex-col">
-        <header className="glass glass-inner-glow sticky top-0 z-10 flex h-14 shrink-0 items-center gap-2 border-b border-border/50 px-3 sm:px-4">
+        <motion.header
+          initial={{ y: -10, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={springs.gentle}
+          className="glass glass-inner-glow sticky top-0 z-10 flex h-14 shrink-0 items-center gap-2 border-b border-border/50 px-3 sm:px-4"
+        >
           <Button
             variant="ghost"
             size="icon"
@@ -172,20 +187,35 @@ fetch(
           >
             <PanelLeftIcon className="size-5" />
           </Button>
-          {!sidebarOpen && (
-            <Button
-              variant="ghost"
-              size="icon"
-              className="hidden size-9 text-muted-foreground hover:text-foreground md:flex"
-              onClick={() => setSidebarOpen(true)}
-              aria-label="Open sidebar"
-            >
-              <PanelLeftIcon className="size-5" />
-            </Button>
-          )}
-          <h2 className="min-w-0 flex-1 truncate text-sm font-medium text-foreground">
+          <AnimatePresence>
+            {!sidebarOpen && (
+              <motion.div
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0, opacity: 0 }}
+                transition={springs.snappy}
+              >
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="hidden size-9 text-muted-foreground hover:text-foreground md:flex"
+                  onClick={() => setSidebarOpen(true)}
+                  aria-label="Open sidebar"
+                >
+                  <PanelLeftIcon className="size-5" />
+                </Button>
+              </motion.div>
+            )}
+          </AnimatePresence>
+          <motion.h2
+            key={activeConversation?.title ?? "New chat"}
+            initial={{ opacity: 0, x: 10 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={springs.gentle}
+            className="min-w-0 flex-1 truncate text-sm font-medium text-foreground"
+          >
             {activeConversation?.title ?? "New chat"}
-          </h2>
+          </motion.h2>
           <Button
             variant="ghost"
             size="icon"
@@ -195,31 +225,61 @@ fetch(
           >
             <SquarePenIcon className="size-5" />
           </Button>
-        </header>
+        </motion.header>
 
-        {messages.length === 0 && !thinking ? (
-          <div className="flex flex-1 flex-col overflow-hidden">
-            <ChatWelcome onPick={(prompt) => handleSend(prompt, [])} />
-            <div className="px-3 pb-4 sm:px-4">
-              <ChatInput onSend={handleSend} disabled={thinking} />
-            </div>
-          </div>
-        ) : (
-          <>
-            <ScrollArea className="min-h-0 flex-1">
-              <div className="mx-auto flex w-full max-w-3xl flex-col gap-8 px-4 py-8">
-                {messages.map((m) => (
-                  <ChatMessage key={m.id} message={m} />
-                ))}
-                {thinking && <TypingIndicator />}
-                <div ref={bottomRef} />
-              </div>
-            </ScrollArea>
-            <div className="shrink-0 px-3 pb-4 sm:px-4">
-              <ChatInput onSend={handleSend} disabled={thinking} />
-            </div>
-          </>
-        )}
+        <AnimatePresence mode="wait">
+          {messages.length === 0 && !thinking ? (
+            <motion.div
+              key="welcome"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="flex flex-1 flex-col overflow-hidden"
+            >
+              <ChatWelcome onPick={(prompt) => handleSend(prompt, [])} />
+              <motion.div
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.3, ...springs.gentle }}
+                className="px-3 pb-4 sm:px-4"
+              >
+                <ChatInput onSend={handleSend} disabled={thinking} />
+              </motion.div>
+            </motion.div>
+          ) : (
+            <motion.div
+              key="chat"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.15 }}
+              className="flex min-h-0 flex-1 flex-col"
+            >
+              <ScrollArea className="min-h-0 flex-1">
+                <div className="mx-auto flex w-full max-w-3xl flex-col gap-8 px-4 py-8">
+                  <AnimatePresence initial={false}>
+                    {messages.map((m) => (
+                      <ChatMessage key={m.id} message={m} />
+                    ))}
+                  </AnimatePresence>
+                  <AnimatePresence>
+                    {thinking && <TypingIndicator />}
+                  </AnimatePresence>
+                  <div ref={bottomRef} />
+                </div>
+              </ScrollArea>
+              <motion.div
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={springs.gentle}
+                className="shrink-0 px-3 pb-4 sm:px-4"
+              >
+                <ChatInput onSend={handleSend} disabled={thinking} />
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </main>
     </div>
   )

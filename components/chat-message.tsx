@@ -1,9 +1,11 @@
 "use client"
 
 import { useState } from "react"
+import { motion } from "framer-motion"
 import { Sparkles as SparklesIcon, Copy as CopyIcon, Check as CheckIcon, ThumbsUp as ThumbsUpIcon, ThumbsDown as ThumbsDownIcon, RotateCcw as RotateCcwIcon, FileText as FileTextIcon } from "lucide-react"
 import type { Message } from "@/lib/chat-types"
 import { cn } from "@/lib/utils"
+import { springs, messageBubble, typingDot } from "@/lib/motion"
 import { Markdown } from "./markdown"
 import {
   Tooltip,
@@ -30,14 +32,17 @@ function ActionButton({
     <Tooltip>
       <TooltipTrigger
         render={
-          <button
+          <motion.button
             type="button"
             onClick={onClick}
             aria-label={label}
-            className="flex size-8 items-center justify-center rounded-lg text-muted-foreground transition-all hover:bg-card hover:text-foreground"
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
+            transition={springs.snappy}
+            className="flex size-8 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-card hover:text-foreground"
           >
             {children}
-          </button>
+          </motion.button>
         }
       />
       <TooltipContent>{label}</TooltipContent>
@@ -61,13 +66,28 @@ export function ChatMessage({ message }: { message: Message }) {
 
   if (isUser) {
     return (
-      <div className="flex animate-in fade-in slide-in-from-bottom-2 justify-end duration-300">
+      <motion.div
+        variants={messageBubble}
+        initial="hidden"
+        animate="visible"
+        exit="exit"
+        layout
+        className="flex justify-end"
+      >
         <div className="flex max-w-[85%] flex-col items-end gap-2 sm:max-w-[75%]">
           {message.attachments && message.attachments.length > 0 && (
-            <div className="flex flex-wrap justify-end gap-2">
-              {message.attachments.map((att) => (
-                <div
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={springs.gentle}
+              className="flex flex-wrap justify-end gap-2"
+            >
+              {message.attachments.map((att, i) => (
+                <motion.div
                   key={att.id}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ ...springs.snappy, delay: i * 0.05 }}
                   className="glass glass-border flex items-center gap-2.5 rounded-xl px-3.5 py-2.5"
                 >
                   <FileTextIcon className="size-4 text-primary" />
@@ -79,30 +99,57 @@ export function ChatMessage({ message }: { message: Message }) {
                       {formatSize(att.size)}
                     </span>
                   </div>
-                </div>
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
           )}
           {message.content && (
-            <div className="glass glass-border glass-shadow rounded-2xl rounded-br-sm px-4 py-3 text-[0.9375rem] leading-relaxed text-foreground">
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={springs.gentle}
+              className="glass glass-border glass-shadow rounded-2xl rounded-br-sm px-4 py-3 text-[0.9375rem] leading-relaxed text-foreground"
+            >
               <p className="whitespace-pre-wrap text-pretty">{message.content}</p>
-            </div>
+            </motion.div>
           )}
         </div>
-      </div>
+      </motion.div>
     )
   }
 
   return (
-    <div className="group/message flex animate-in fade-in slide-in-from-bottom-2 gap-3 duration-300 sm:gap-4">
-      <div className="mt-1 flex size-8 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-primary/80 text-primary-foreground shadow-sm glass-inner-glow">
+    <motion.div
+      variants={messageBubble}
+      initial="hidden"
+      animate="visible"
+      exit="exit"
+      layout
+      className="group/message flex gap-3 sm:gap-4"
+    >
+      <motion.div
+        initial={{ scale: 0, rotate: -180 }}
+        animate={{ scale: 1, rotate: 0 }}
+        transition={springs.bouncy}
+        className="mt-1 flex size-8 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-primary/80 text-primary-foreground shadow-sm glass-inner-glow"
+      >
         <SparklesIcon className="size-4" />
-      </div>
+      </motion.div>
       <div className="flex min-w-0 flex-1 flex-col gap-1.5">
-        <div className="glass glass-border glass-shadow rounded-2xl rounded-tl-sm px-5 py-4">
+        <motion.div
+          initial={{ opacity: 0, x: -10 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={springs.gentle}
+          className="glass glass-border glass-shadow rounded-2xl rounded-tl-sm px-5 py-4"
+        >
           <Markdown content={message.content} />
-        </div>
-        <div className="flex items-center gap-0.5 pt-0.5 opacity-0 transition-opacity duration-200 group-hover/message:opacity-100 focus-within:opacity-100">
+        </motion.div>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.2, ...springs.gentle }}
+          className="flex items-center gap-0.5 pt-0.5 opacity-0 transition-opacity duration-200 group-hover/message:opacity-100 focus-within:opacity-100"
+        >
           <ActionButton label={copied ? "Copied" : "Copy"} onClick={handleCopy}>
             {copied ? (
               <CheckIcon className="size-4 text-primary" />
@@ -119,25 +166,47 @@ export function ChatMessage({ message }: { message: Message }) {
           <ActionButton label="Regenerate">
             <RotateCcwIcon className="size-4" />
           </ActionButton>
-        </div>
+        </motion.div>
       </div>
-    </div>
+    </motion.div>
   )
 }
 
 export function TypingIndicator() {
   return (
-    <div className="flex animate-in fade-in gap-3 duration-300 sm:gap-4">
-      <div className="mt-1 flex size-8 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-primary/80 text-primary-foreground shadow-sm glass-inner-glow">
+    <motion.div
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, scale: 0.95, transition: { duration: 0.15 } }}
+      transition={springs.gentle}
+      className="flex gap-3 sm:gap-4"
+    >
+      <motion.div
+        initial={{ scale: 0 }}
+        animate={{ scale: 1 }}
+        transition={springs.bouncy}
+        className="mt-1 flex size-8 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-primary/80 text-primary-foreground shadow-sm glass-inner-glow"
+      >
         <SparklesIcon className="size-4" />
-      </div>
-      <div className="glass glass-border rounded-2xl rounded-tl-sm px-5 py-4">
+      </motion.div>
+      <motion.div
+        initial={{ opacity: 0, x: -10 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={springs.gentle}
+        className="glass glass-border rounded-2xl rounded-tl-sm px-5 py-4"
+      >
         <div className="flex items-center gap-2">
-          <span className="size-2 animate-bounce rounded-full bg-primary [animation-delay:-0.3s]" />
-          <span className="size-2 animate-bounce rounded-full bg-primary [animation-delay:-0.15s]" />
-          <span className="size-2 animate-bounce rounded-full bg-primary" />
+          {[0, 1, 2].map((i) => (
+            <motion.span
+              key={i}
+              custom={i}
+              variants={typingDot}
+              animate="animate"
+              className="size-2 rounded-full bg-primary"
+            />
+          ))}
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   )
 }
