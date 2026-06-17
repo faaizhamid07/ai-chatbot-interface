@@ -2,7 +2,7 @@
 
 import { useMemo } from "react"
 import { motion } from "framer-motion"
-import { MessageSquarePlus as MessageSquarePlusIcon, PanelLeftClose as PanelLeftCloseIcon, Search as SearchIcon, MoreHorizontal as MoreHorizontalIcon, Trash2 as Trash2Icon, PencilLine as PencilLineIcon, Sparkles as SparklesIcon } from "lucide-react"
+import { MessageSquarePlus as MessageSquarePlusIcon, PanelLeftClose as PanelLeftCloseIcon, Search as SearchIcon, MoveHorizontal as MoreHorizontalIcon, Trash2 as Trash2Icon, PencilLine as PencilLineIcon, Sparkles as SparklesIcon } from "lucide-react"
 import type { Conversation } from "@/lib/chat-types"
 import { cn } from "@/lib/utils"
 import { springs, staggerContainer, staggerItem } from "@/lib/motion"
